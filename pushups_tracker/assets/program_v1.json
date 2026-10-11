@@ -1,0 +1,197 @@
+{
+  "version": 1,
+  "initialTest": {
+    "type": "max_reps",
+    "instruction": "Perform as many good-form pushups as you can.",
+    "ranks": [
+      {"rank": 1, "age_lt40": "0-5", "age_40_55": "0-5", "age_gt55": "0-5"},
+      {"rank": 2, "age_lt40": "6-14", "age_40_55": "6-12", "age_gt55": "6-10"},
+      {"rank": 3, "age_lt40": "15-29", "age_40_55": "13-24", "age_gt55": "11-19"},
+      {"rank": 4, "age_lt40": "30-49", "age_40_55": "25-44", "age_gt55": "20-34"},
+      {"rank": 5, "age_lt40": "50-99", "age_40_55": "45-74", "age_gt55": "35-64"},
+      {"rank": 6, "age_lt40": "100-150", "age_40_55": "75-124", "age_gt55": "65-99"},
+      {"rank": 7, "age_lt40": ">150", "age_40_55": ">125", "age_gt55": ">100"}
+    ],
+    "startRouting": [
+      {"max": 5, "goto": {"week": 1, "column": 1}},
+      {"max": 10, "goto": {"week": 1, "column": 2}},
+      {"max": 20, "goto": {"week": 1, "column": 3}},
+      {"max": 30, "goto": {"week": 3, "column": 2}},
+      {"max": 99999, "goto": {"week": 3, "column": 3}}
+    ]
+  },
+  "weeks": [
+    {
+      "week": 1,
+      "columnLabels": ["< 5", "6-10", "11-20"],
+      "days": [
+        {
+          "restSeconds": 60,
+          "sets": [[2,6,10],[3,6,12],[2,4,7],[2,4,7],[3,5,9]],
+          "isPlus": [false,false,false,false,true]
+        },
+        {
+          "restSeconds": 60,
+          "sets": [[3,6,10],[4,8,12],[2,6,8],[3,6,8],[4,7,12]],
+          "isPlus": [false,false,false,false,true]
+        },
+        {
+          "restSeconds": 60,
+          "sets": [[4,8,11],[5,10,15],[4,7,9],[4,7,9],[5,10,13]],
+          "isPlus": [false,false,false,false,true]
+        }
+      ]
+    },
+    {
+      "week": 2,
+      "columnLabels": ["< 5", "6-10", "11-20"],
+      "days": [
+        {
+          "restSeconds": 60,
+          "sets": [[4,9,14],[6,11,14],[4,8,10],[4,8,10],[6,11,15]],
+          "isPlus": [false,false,false,false,true]
+        },
+        {
+          "restSeconds": 90,
+          "sets": [[5,10,14],[6,12,16],[4,9,12],[4,9,12],[7,13,17]],
+          "isPlus": [false,false,false,false,true]
+        },
+        {
+          "restSeconds": 120,
+          "sets": [[5,12,16],[7,13,17],[5,10,14],[5,10,14],[8,15,20]],
+          "isPlus": [false,false,false,false,true]
+        }
+      ]
+    },
+    {
+      "week": 3,
+      "columnLabels": ["16-20", "21-25", ">25"],
+      "days": [
+        {
+          "restSeconds": 60,
+          "sets": [[10,12,14],[12,17,18],[7,13,14],[7,13,14],[9,17,20]],
+          "isPlus": [false,false,false,false,true]
+        },
+        {
+          "restSeconds": 90,
+          "sets": [[10,14,20],[12,19,25],[8,14,15],[8,14,15],[12,19,25]],
+          "isPlus": [false,false,false,false,true]
+        },
+        {
+          "restSeconds": 120,
+          "sets": [[11,16,22],[13,21,30],[9,15,20],[9,15,20],[13,21,28]],
+          "isPlus": [false,false,false,false,true]
+        }
+      ]
+    },
+    {
+      "week": 4,
+      "columnLabels": ["16-20", "21-25", ">25"],
+      "days": [
+        {
+          "restSeconds": 60,
+          "sets": [[12,18,21],[14,22,25],[11,16,21],[10,16,21],[16,25,32]],
+          "isPlus": [false,false,false,false,true]
+        },
+        {
+          "restSeconds": 90,
+          "sets": [[14,20,25],[16,25,29],[12,20,25],[12,20,25],[18,28,36]],
+          "isPlus": [false,false,false,false,true]
+        },
+        {
+          "restSeconds": 120,
+          "sets": [[16,23,29],[18,28,33],[13,23,29],[13,23,29],[20,33,40]],
+          "isPlus": [false,false,false,false,true]
+        }
+      ]
+    },
+    {
+      "week": 5,
+      "columnLabels": ["31-35", "36-40", ">40"],
+      "days": [
+        {
+          "restSeconds": 60,
+          "sets": [[17,28,36],[19,35,40],[15,25,30],[15,22,24],[20,35,40]],
+          "isPlus": [false,false,false,false,true]
+        },
+        {
+          "restSeconds": 45,
+          "sets": [[10,18,19],[10,18,19],[13,20,22],[13,20,22],[10,14,18],[10,14,18],[9,16,22],[25,40,45]],
+          "isPlus": [false,false,false,false,false,false,false,true]
+        },
+        {
+          "restSeconds": 45,
+          "sets": [[13,18,20],[13,18,20],[15,20,24],[15,20,24],[12,17,20],[12,17,20],[10,20,22],[30,45,50]],
+          "isPlus": [false,false,false,false,false,false,false,true]
+        }
+      ]
+    },
+    {
+      "week": 6,
+      "columnLabels": ["46-50", "51-60", ">60"],
+      "days": [
+        {
+          "restSeconds": 60,
+          "sets": [[25,40,45],[30,50,55],[20,25,35],[15,25,30],[40,50,55]],
+          "isPlus": [false,false,false,false,true]
+        },
+        {
+          "restSeconds": 45,
+          "sets": [[14,20,22],[14,20,22],[15,23,30],[15,23,30],[14,20,24],[14,20,24],[10,18,18],[10,18,18],[44,53,58]],
+          "isPlus": [false,false,false,false,false,false,false,false,true]
+        },
+        {
+          "restSeconds": 45,
+          "sets": [[13,22,26],[13,22,26],[17,30,33],[17,30,33],[16,25,26],[16,25,26],[14,18,22],[14,18,22],[50,55,60]],
+          "isPlus": [false,false,false,false,false,false,false,false,true]
+        }
+      ]
+    }
+  ],
+  "exhaustionTests": [
+    {
+      "id": "ET1",
+      "afterWeek": 2,
+      "windowDays": 2,
+      "instruction": "Perform as many good-form pushups as you can comfortably manage before you physically can't do another rep.",
+      "routing": [
+        {"max": 15, "action": "repeat", "targetWeek": 2},
+        {"max": 20, "goto": {"week": 3, "column": 1}},
+        {"max": 25, "goto": {"week": 3, "column": 2}},
+        {"max": 99999, "goto": {"week": 3, "column": 3}}
+      ]
+    },
+    {
+      "id": "ET2",
+      "afterWeek": 4,
+      "windowDays": 2,
+      "instruction": "Perform as many good-form pushups as you can comfortably manage before you physically can't do another rep.",
+      "routing": [
+        {"max": 30, "action": "repeat", "targetWeek": 4},
+        {"max": 35, "goto": {"week": 5, "column": 1}},
+        {"max": 40, "goto": {"week": 5, "column": 2}},
+        {"max": 99999, "goto": {"week": 5, "column": 3}}
+      ]
+    },
+    {
+      "id": "ET3",
+      "afterWeek": 5,
+      "windowDays": 2,
+      "instruction": "Perform as many good-form pushups as you can comfortably manage before you physically can't do another rep.",
+      "routing": [
+        {"max": 45, "action": "repeat", "targetWeek": 5},
+        {"max": 50, "goto": {"week": 6, "column": 1}},
+        {"max": 60, "goto": {"week": 6, "column": 2}},
+        {"max": 99999, "goto": {"week": 6, "column": 3}}
+      ]
+    }
+  ],
+  "finalTest": {
+    "afterWeek": 6,
+    "restDaysBefore": 2,
+    "goal": 100,
+    "instruction": "Perform as many good-form pushups as you can. If you completed the program without cheating, you should be strong enough for 100 consecutive pushups.",
+    "advice": "Do ten at a time; keep good form; don't hold your breath. If you feel shaky, take a few deep breaths and continue.",
+    "onFail": "Repeat Week 5 or 6, then retest."
+  }
+}
