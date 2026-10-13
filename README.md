@@ -1,6 +1,6 @@
 # 100 Pushups Tracker
 
-A Flutter mobile app for the pushups 6-week training program. Offline-first, no account required, with local notifications, rest timer, progress tracking, and charts.
+A Flutter mobile app for the [hundredpushups.com](https://hundredpushups.com) 6-week training program. Offline-first, no account required, with local notifications, rest timer, progress tracking, and charts.
 
 ## Features
 
@@ -10,7 +10,10 @@ A Flutter mobile app for the pushups 6-week training program. Offline-first, no 
 - **Schedule & notifications**: pick 3 days/week + time; local push notifications for upcoming workouts/tests (no server)
 - **Missed / incomplete handling**: unfinished work is automatically reprogrammed to the next workout slot; catch-up cards on Home
 - **Progress tracking**: SQLite database stores every rep, set, and test; line chart of max reps over time + weekly volume bar chart
-- **Onboarding**: disclaimer → initial test → schedule picker → program start
+- **Onboarding**: disclaimer → registration (name, age, weight, sex) → initial test → schedule picker → summary with your first workout's sets
+- **Workout preview**: see every set, the rest time and an estimated duration before starting; upcoming slots open a read-only preview
+- **Program browser**: all 6 weeks × 3 days × 3 columns, test gates with routing thresholds, rank table with your age band highlighted
+- **Profile**: editable in Settings; only age is used (rank band), weight and sex are stored for your records and export
 
 ## Tech Stack
 
@@ -19,10 +22,10 @@ A Flutter mobile app for the pushups 6-week training program. Offline-first, no 
 | Framework | Flutter 3.16+ |
 | State management | `flutter_bloc` |
 | Database | `drift` (SQLite) |
-| Notifications | `flutter_local_notifications` + `android_alarm_manager_plus` |
-| Foreground timer | `flutter_foreground_task` |
+| Notifications | `flutter_local_notifications` (scheduled via `zonedSchedule`, exact alarms) |
+| Rest-end alert | `flutter_local_notifications` (scheduled at rest end; no foreground service) |
 | Charts | `fl_chart` |
-| Utilities | `wakelock_plus`, `vibration`, `shared_preferences` |
+| Utilities | `wakelock_plus`, `vibration`, `shared_preferences` (settings + crash-recovery snapshot), `share_plus` (export), `intl` |
 
 ## Project Structure
 
@@ -37,9 +40,28 @@ lib/
 │   └── routing/
 │       └── routing_engine.dart    # Initial test & exhaustion test routing logic
 ├── services/
-│   ├── notification_service.dart  # Local notification scheduling (iOS + Android)
+│   ├── notification_service.dart  # Local notifications: slot reminders, day-before, rest-end alert
+│   ├── progression_service.dart   # Advances week/day/column; applies test routing
+│   ├── app_settings.dart          # Haptics / sound / keep-awake / rest-alert prefs
+│   ├── export_service.dart        # CSV + JSON export via share sheet
+│   ├── session_store.dart         # Crash-recovery snapshot of the live session
 │   └── reschedule_engine.dart     # Generates slots, handles missed/incomplete reprogramming
 ├── presentation/
+│   ├── home/
+│   │   └── home_shell.dart        # 3-tab IndexedStack shell (Home · Progress · Schedule)
+│   ├── preview/
+│   │   └── workout_preview_screen.dart # Sets/rest/duration before starting (spec §3.8)
+│   ├── program/
+│   │   └── program_screen.dart    # Browse all weeks/days/columns + test gates (spec §3.9)
+│   ├── settings/
+│   │   ├── settings_screen.dart   # Profile, toggles, column override, repeat week, export, reset
+│   │   └── profile_edit_screen.dart
+│   ├── test/
+│   │   └── test_screen.dart       # Exhaustion / final test with routing confirmation
+│   ├── widgets/
+│   │   ├── rep_counter.dart       # Shared tap-to-count widget
+│   │   ├── profile_form.dart      # Name/age/weight/sex form (registration + edit)
+│   │   └── workout_plan_card.dart # Set table used by preview, onboarding, program
 │   ├── dashboard/
 │   │   └── dashboard_screen.dart  # Home: current position, next workout, stats, catch-up cards
 │   ├── workout_session/
@@ -70,16 +92,33 @@ assets/
 
 ### Setup
 
+The Flutter project lives in `pushups_tracker/`; run all commands from there.
+
 ```bash
+cd pushups_tracker
+
 # 1. Get dependencies
 flutter pub get
 
 # 2. Generate Drift database code
-flutter pub run build_runner build --delete-conflicting-outputs
+dart run build_runner build --delete-conflicting-outputs
 
 # 3. Run on your device
 flutter run
 ```
+
+### Run on the Android emulator
+
+```bash
+flutter emulators                                   # list AVDs (e.g. Medium_Phone_API_37.0)
+flutter emulators --launch Medium_Phone_API_37.0    # boot it (first boot can take a few minutes)
+flutter run -d emulator-5554                        # build, install, launch with hot reload
+```
+
+Notes:
+- `android/app/build.gradle.kts` enables core-library desugaring (needed by `flutter_local_notifications`) and sets `minSdk = 26`.
+- The first Gradle build downloads Gradle, AGP and SDK platforms; expect 5–10 minutes. Later builds take about a minute.
+- Application id: `com.apanizza.pushups_tracker`.
 
 ### Build
 
@@ -100,23 +139,21 @@ flutter build ios --release
 
 The manifest already declares:
 - `SCHEDULE_EXACT_ALARM` and `USE_EXACT_ALARM` for precise workout reminders
-- `FOREGROUND_SERVICE_HEALTH` / `DATA_SYNC` for the rest timer foreground service
 - `RECEIVE_BOOT_COMPLETED` to reschedule alarms after reboot
 - `POST_NOTIFICATIONS` runtime permission (Android 13+)
 
-**Important:** The app must be whitelisted from battery optimization for the foreground rest timer to survive reliably. The spec includes a one-time user prompt for this after onboarding.
 
 ### iOS
 
 The Info.plist declares:
-- `UIBackgroundModes`: `fetch` and `processing` for extended runtime sessions
+- No background modes: the rest timer is wall-clock based and uses a scheduled local notification as the screen-off cue
 - `flutter_local_notifications` handles `UNUserNotificationCenter` authorization
 
 ## Database Schema
 
 | Table | Purpose |
 |---|---|
-| `users` | Profile: schedule days/time, current week/day/column, onboarding flag |
+| `users` | Profile (name, age, weight, sex), schedule days/time, current week/day/column, pending test, onboarding flag — schema v2 |
 | `scheduled_slots` | Calendar of upcoming workouts/tests with status (pending/done/missed/...) |
 | `workouts` | Record of each workout session: week, day, column, status, timestamps |
 | `workout_sets` | Individual sets within a workout: prescribed, performed, isPlus, rest extension |
@@ -128,18 +165,22 @@ All workout data lives in `assets/program_v1.json`. To modify the program (e.g.,
 
 ## Key Implementation Details
 
-1. **Rest timer**: implemented as a `Timer.periodic` inside the BLoC; the UI shows a `CircularProgressIndicator`. For production, wrap this in `flutter_foreground_task` so it survives screen-off.
-2. **Reprogramming**: when a slot is missed or a workout abandoned, `RescheduleEngine` inserts the same week/day into the next available slot and shifts future slots forward. History rows are immutable.
+1. **Rest timer**: wall-clock based — the BLoC stores `restEndsAt` and derives the countdown from it on each tick, so backgrounding does not drift the timer. Every state change is snapshotted to `shared_preferences` (`SessionStore`) so an interrupted session can be resumed from the dashboard.
+2. **Reprogramming**: the user position (`users.currentWeek/currentDay/pendingTest`) is the source of truth. `RescheduleEngine.rebuildSchedule` drops all *pending* slots and regenerates them from that position (backlog resume slots first, then the pending test, then remaining days). Missed slots (12 h grace) are detected on dashboard load. History rows are immutable.
 3. **Notification IDs**: use the `scheduled_slot.id` as the notification ID, so canceling/rescheduling is trivial.
 4. **BLoC state machine**: `idle → active → resting → active → ... → complete → saved`. The rest timer ticks via `RestTicked` events.
 
 ## Next Steps / TODOs
 
-- [ ] Add `flutter_foreground_task` integration in `WorkoutSessionScreen` for background rest timer
+- [x] Rest timer survives screen-off via a scheduled local notification (no foreground service needed)
 - [ ] Add Android battery-optimization whitelist prompt
 - [ ] Implement volume-button rep counting (native method channel)
-- [ ] Add CSV/JSON export in Settings
+- [x] Add CSV/JSON export in Settings
 - [ ] Add dark/light theme toggle
-- [ ] Add sound effects for rest timer countdown
-- [ ] Implement "undo rep" in BLoC
-- [ ] Add unit tests for `RoutingEngine` and `RescheduleEngine`
+- [x] Add sound effects for rest timer countdown
+- [x] Implement "undo rep" in BLoC
+- [x] Add unit tests for `RoutingEngine` and `RescheduleEngine` (pure logic; DB-backed tests still TODO)
+
+## License
+
+Program data compiled from [hundredpushups.com](https://hundredpushups.com). App code is scaffolded for personal use.
