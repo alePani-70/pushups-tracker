@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../theme/app_theme.dart';
 import '../../data/database.dart';
 import '../../data/program_repository.dart';
 import '../../domain/routing/routing_engine.dart';
@@ -286,16 +287,16 @@ class _ScheduleStep extends StatelessWidget {
           }),
         ),
         if (selectedDays.length != 3)
-          const Padding(
-            padding: EdgeInsets.only(top: 8),
-            child: Text('Select exactly 3 days', style: TextStyle(color: Colors.orange)),
+          Padding(
+            padding: const EdgeInsets.only(top: 8),
+            child: Text('Select exactly 3 days', style: TextStyle(color: AppColors.of(context).warning)),
           )
         else if (consecutive)
-          const Padding(
-            padding: EdgeInsets.only(top: 8),
+          Padding(
+            padding: const EdgeInsets.only(top: 8),
             child: Text(
               'Two days are back-to-back. At least one rest day between workouts is recommended.',
-              style: TextStyle(color: Colors.orange),
+              style: TextStyle(color: AppColors.of(context).warning),
             ),
           ),
         const SizedBox(height: 24),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../theme/app_theme.dart';
 import '../../domain/models/workout_plan.dart';
 
 /// Set table for one workout day (spec §3.8): set number, prescribed reps,
@@ -55,7 +56,7 @@ class WorkoutPlanCard extends StatelessWidget {
                 for (final set in plan.sets)
                   TableRow(
                     decoration: hasPerformed && performed![set.index] != null
-                        ? BoxDecoration(color: Colors.green.withValues(alpha: 0.12))
+                        ? BoxDecoration(color: AppColors.of(context).success.withValues(alpha: 0.12))
                         : null,
                     children: [
                       _cell(context, '${set.index + 1}'),

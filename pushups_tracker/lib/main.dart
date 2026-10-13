@@ -11,6 +11,7 @@ import 'services/reschedule_engine.dart';
 import 'services/session_store.dart';
 import 'presentation/home/home_shell.dart';
 import 'presentation/onboarding/onboarding_screen.dart';
+import 'presentation/theme/app_theme.dart';
 import 'presentation/test/test_screen.dart';
 import 'presentation/workout_session/bloc/workout_bloc.dart';
 import 'presentation/workout_session/workout_session_screen.dart';
@@ -82,14 +83,9 @@ class PushupsApp extends StatelessWidget {
     return MaterialApp(
       title: '100 Pushups',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.deepOrange,
-          brightness: Brightness.dark,
-        ),
-        useMaterial3: true,
-        fontFamily: 'Roboto',
-      ),
+      theme: buildLightTheme(),
+      darkTheme: buildDarkTheme(),
+      themeMode: ThemeMode.system,
       initialRoute: initialRoute,
       routes: {
         '/onboarding': (context) => OnboardingScreen(

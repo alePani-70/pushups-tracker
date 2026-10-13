@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../theme/app_theme.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vibration/vibration.dart';
@@ -262,10 +263,11 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen> {
         final isDone = set.performed != null && !isCurrent;
         return Chip(
           label: Text(isDone ? '${set.label} → ${set.performed}' : set.label),
+          labelStyle: isCurrent ? TextStyle(color: scheme.onPrimary) : null,
           backgroundColor: isCurrent
               ? scheme.primary
               : isDone
-                  ? Colors.green.shade700
+                  ? AppColors.of(context).successContainer
                   : null,
         );
       }).toList(),

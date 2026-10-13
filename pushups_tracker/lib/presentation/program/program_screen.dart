@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../theme/app_theme.dart';
 import '../../data/database.dart';
 import '../../data/program_repository.dart';
 import '../preview/workout_preview_screen.dart';
@@ -124,7 +125,7 @@ class _ProgramScreenState extends State<ProgramScreen> {
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         leading: Icon(
           done ? Icons.check_circle : (next ? Icons.play_circle_outline : Icons.circle_outlined),
-          color: done ? Colors.green : (next ? scheme.primary : scheme.outline),
+          color: done ? AppColors.of(context).success : (next ? scheme.primary : scheme.outline),
         ),
         title: Text('Day ${day + 1}${next ? ' · next up' : done ? ' · done' : ''}'),
         subtitle: Padding(
@@ -165,7 +166,7 @@ class _ProgramScreenState extends State<ProgramScreen> {
           children: [
             Row(
               children: [
-                const Icon(Icons.fitness_center, color: Colors.orange),
+                Icon(Icons.fitness_center, color: AppColors.of(context).accent),
                 const SizedBox(width: 8),
                 Text('Exhaustion test (${test['id']}) after Week $_week', style: theme.textTheme.titleMedium),
               ],
@@ -195,7 +196,7 @@ class _ProgramScreenState extends State<ProgramScreen> {
           children: [
             Row(
               children: [
-                const Icon(Icons.emoji_events, color: Colors.amber),
+                Icon(Icons.emoji_events, color: AppColors.of(context).warning),
                 const SizedBox(width: 8),
                 Text('Final test after Week 6', style: theme.textTheme.titleMedium),
               ],

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../theme/app_theme.dart';
 import '../../data/database.dart';
 import '../../services/notification_service.dart';
 import '../../services/reschedule_engine.dart';
@@ -100,12 +101,12 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
           if (_selectedDays.length != 3)
             Text(
               'Please select exactly 3 days.',
-              style: theme.textTheme.bodySmall?.copyWith(color: Colors.orange),
+              style: theme.textTheme.bodySmall?.copyWith(color: AppColors.of(context).warning),
             )
           else if (consecutive)
             Text(
               'Two of your days are back-to-back. The program recommends at least one rest day between workouts.',
-              style: theme.textTheme.bodySmall?.copyWith(color: Colors.orange),
+              style: theme.textTheme.bodySmall?.copyWith(color: AppColors.of(context).warning),
             ),
           const SizedBox(height: 24),
           ListTile(

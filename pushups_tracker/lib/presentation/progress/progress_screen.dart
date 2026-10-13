@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import '../theme/app_theme.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
 import '../../data/database.dart';
@@ -167,7 +168,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
         _TimelineItem(
           date: test.takenAt,
           tile: ListTile(
-            leading: const Icon(Icons.fitness_center, color: Colors.orange),
+            leading: Icon(Icons.fitness_center, color: AppColors.of(context).accent),
             title: Text('${test.kind.toUpperCase()} TEST'),
             subtitle: Text('${test.result} reps'),
             trailing: Text(_formatDate(test.takenAt)),
@@ -179,7 +180,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
           tile: ListTile(
             leading: Icon(
               w.status == 'completed' ? Icons.check_circle : Icons.pause_circle_outline,
-              color: w.status == 'completed' ? Colors.green : Colors.amber,
+              color: w.status == 'completed' ? AppColors.of(context).success : AppColors.of(context).warning,
             ),
             title: Text('Week ${w.week} · Day ${w.day + 1}${w.repeatFlag ? ' · repeat' : ''}'),
             subtitle: Text(w.status == 'completed'
